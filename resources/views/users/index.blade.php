@@ -4,8 +4,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h2 class="text-2xl font-semibold mb-4">Users List</h2>
 
-                <a href="{{ route('tasks.create') }}" class="create-user-btn">
-                    Create Tasks
+                <a href="{{ route('users.create') }}" class="create-user-btn">
+                    Create User
                 </a>
 
                 <table class="table">
@@ -18,10 +18,10 @@
                                 Name
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Description
+                                Email
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
+                                Roles
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
@@ -29,24 +29,24 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($tasks as $task)
+                        @foreach($users as $user)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $task->id }}
+                                    {{ $user->id }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $task->title }}
+                                    {{ $user->name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $task->description }}
+                                    {{ $user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $task->status }}
+                                    {{ $user->getRoleNames()->implode(', ') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <a href="{{ route('tasks.edit', $task->id) }}" class="text-blue-500 mr-2">Edit</a>
-                                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="inline">
+                                        <a href="{{ route('users.edit', $user->id) }}" class="text-blue-500 mr-2">Edit</a>
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-500" onclick="return confirm('Are you sure?')">Delete</button>

@@ -90,4 +90,16 @@ class TaskApiController extends Controller
         // For Blade view
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully');
     }
+    public function create()
+    {
+        $tasks = Task::all();
+
+        return view('users.create', compact('tasks'));
+    }
+    public function edit(Task $task)
+    {
+        // $user will automatically be populated with the user corresponding to the ID in the route
+
+        return view('tasks.edit', compact('task'));
+    }
 }
