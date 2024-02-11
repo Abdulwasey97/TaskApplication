@@ -36,10 +36,10 @@ class DatabaseSeeder extends Seeder
 
         // Create admin user if not exists
         $adminUser = User::firstOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['email' => 'abdulwaseyjaved@yahoo.com'],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('Abdul92729J'), // Replace with a secure password
+                'password' => bcrypt('123456789'), // Replace with a secure password
             ]
         );
 
