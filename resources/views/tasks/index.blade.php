@@ -2,7 +2,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Users List</h2>
+                <h2 class="text-2xl font-semibold mb-4">Task List</h2>
 
                 <a href="{{ route('tasks.create') }}" class="create-user-btn">
                     Create Tasks
@@ -41,15 +41,30 @@
                                     {{ $task->description }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ $task->status }}
+                                    @can('edit task')
+                                        <!-- Dropdown for editing with all options -->
+                                        <select name="status" class="select-field task-status" data-task-id="{{ $task->id }}">
+                                            <option value="TO DO" {{ $task->status == 'To Do' ? 'selected' : '' }}>To Do</option>
+                                            <option value="IN PROGRESS" {{ $task->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                                            <option value="COMPLETED" {{ $task->status == 'Completed' ? 'selected' : '' }}>Completed</option>
+
+
+                                        </select>    <div color="red" class="message-container"></div>
+                                    @else
+                                        <!-- Display task status if the user doesn't have edit permissions -->
+                                        {{ $task->status }}
+                                    @endcan
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <a href="{{ route('tasks.edit', $task->id) }}" class="text-blue-500 mr-2">Edit</a>
+                                        @can('give feedback')            <a href="{{ route('tasks.feedback', $task->id) }}" class="text-blue-500 mr-2">Feedbacks</a>@endcan
+                             @can('edit task')             <a href="{{ route('tasks.edit', $task->id) }}" class="text-blue-500 mr-2">Edit</a>@endcan
+
+
                                         <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-500" onclick="return confirm('Are you sure?')">Delete</button>
+                                        @can('delete task')    <button type="submit" class="text-red-500" onclick="return confirm('Are you sure?')">Delete</button>@endcan
                                         </form>
                                     </div>
                                 </td>
@@ -61,54 +76,34 @@
         </div>
     </div>
 </x-app-layout>
-<style>
-    a.create-user-btn {
-    display: inline-block;
-    background-color: #3490dc;
-    color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    text-decoration: none;
-    margin: 0px;
-    transition: background-color 0.3s ease;
-}
 
-/* Hover effect */
-a.create-user-btn:hover {
-    background-color: #01070c;
-}
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-/* Style for the table header */
-.table thead {
-    background-color: #f8f9fa; /* Light gray background color */
-}
+<script>
+    $(document).ready(function () {
+        $('.task-status').change(function () {
+            var taskId = $(this).data('task-id');
+            var newStatus = $(this).val();
+            var messageContainer = $(this).siblings('.message-container');
 
-/* Style for the table header cells */
-.table th {
-    padding: 1rem;
-    text-align: left;
-    font-size: 0.875rem; /* Adjust font size */
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #495057; /* Dark gray text color */
-}
-
-/* Style for the table body cells */
-.table td {
-    padding: 1rem;
-    font-size: 0.875rem; /* Adjust font size */
-    color: #495057; /* Dark gray text color */
-    border-bottom: 1px solid #e2e8f0; /* Light gray border */
-}
-
-/* Style for alternating row colors in the table body */
-.table tbody tr:nth-child(even) {
-    background-color: #f1f5f8; /* Light blue background color */
-}
-
-</style>
+            // Send AJAX request to update task status
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('update.task.status') }}',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    task_id: taskId,
+                    status: newStatus
+                },
+                success: function (response) {
+                    console.log(response);
+                    messageContainer.html('<div class="text-green-500">Status updated successfully</div>');
+                },
+                error: function (error) {
+                    console.error(error);
+                    messageContainer.html('<div class="text-red-500">Failed to update status</div>');
+                }
+            });
+        });
+    });
+</script>
