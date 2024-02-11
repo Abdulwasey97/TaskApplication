@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'abdulwaseyjaved@yahoo.com'],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('123456789'), // Replace with a secure password
+                'password' => bcrypt('12345678'), // Replace with a secure password
             ]
         );
 
